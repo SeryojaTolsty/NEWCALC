@@ -1,19 +1,15 @@
 package ru.gb.newcalc;
 
-import static android.content.ContentValues.TAG;
-import static ru.gb.newcalc.R.id.editText;
-
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.databinding.DataBindingUtil;
 
 import java.text.DecimalFormat;
@@ -21,7 +17,8 @@ import java.text.DecimalFormat;
 import ru.gb.newcalc.databinding.ActivityMainBinding;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
 
 
     private ActivityMainBinding binding;
@@ -35,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
     private EditText editText;
+    private Button changeTheme;
 
 
     private DecimalFormat decimalFormat;
@@ -44,9 +42,12 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY_TWO = "KEY_TWO";
     public static final String KEY_RESULT = "KEY_RESULT";
 
+
     private double valueOne = Double.NaN;
     private double valueTwo;
+    private double valueThree;
     private String result;
+
 
 
     @Override
@@ -54,11 +55,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
+
         decimalFormat = new DecimalFormat("#.##########");
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         textView = findViewById(R.id.textView);
         editText = findViewById(R.id.editText);
+        changeTheme = findViewById(R.id.buttonTheme);
+        changeTheme.setOnClickListener(this);
 
 
         if (savedInstanceState != null) {
@@ -71,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
             if (savedInstanceState.containsKey(KEY_RESULT)) {
                 result = savedInstanceState.getString(KEY_RESULT);
             }
+            textView.setText(result);
         }
 
 
@@ -157,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 computeCalculation();
                 CURRENT_ACTION = ADDITION;
                 binding.textView.setText(decimalFormat.format(valueOne) + "+");
+
                 binding.editText.setText(null);
             }
         });
@@ -167,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 computeCalculation();
                 CURRENT_ACTION = SUBTRACTION;
                 binding.textView.setText(decimalFormat.format(valueOne) + "-");
+
                 binding.editText.setText(null);
             }
         });
@@ -177,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 computeCalculation();
                 CURRENT_ACTION = MULTIPLICATION;
                 binding.textView.setText(decimalFormat.format(valueOne) + "*");
+
                 binding.editText.setText(null);
             }
         });
@@ -185,22 +193,27 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 computeCalculation();
+
                 CURRENT_ACTION = DIVISION;
                 binding.textView.setText(decimalFormat.format(valueOne) + "/");
+
                 binding.editText.setText(null);
             }
         });
+
 
         binding.buttonEqual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 computeCalculation();
-                binding.textView.setText(binding.textView.getText().toString() +
-                        decimalFormat.format(valueTwo) + " = " + decimalFormat.format(valueOne));
+                result = binding.textView.getText().toString() +
+                        decimalFormat.format(valueTwo) + " = " + decimalFormat.format(valueOne);
+                binding.textView.setText(result);
                 valueOne = Double.NaN;
                 CURRENT_ACTION = '0';
             }
         });
+
 
         binding.buttonClear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,11 +224,23 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     valueOne = Double.NaN;
                     valueTwo = Double.NaN;
+                    valueThree = Double.NaN;
                     binding.editText.setText("");
                     binding.textView.setText("");
                 }
             }
         });
+//        binding.buttonTheme.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent changeTheme = new Intent(MainActivity.this, ChangeThemeActivity.class);
+//                startActivity(changeTheme);
+//
+//            }
+//        });
+
+
+
     }
 
 
@@ -225,6 +250,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putDouble(KEY_ONE, valueOne);
         outState.putDouble(KEY_TWO, valueTwo);
         outState.putString(KEY_RESULT, result);
+
     }
 
     private void computeCalculation() {
@@ -245,5 +271,11 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
             }
         }
+    }
+
+
+    public void onClick(View v) {
+        Intent changeThemeActivity = new Intent(this, ChangeThemeActivity.class);
+        startActivity(changeThemeActivity);
     }
 }

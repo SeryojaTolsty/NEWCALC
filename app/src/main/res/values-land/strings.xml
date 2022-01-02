@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="button_clear" translatable="false">C</string>
+    <string name="change_theme">T</string>
+</resources>
